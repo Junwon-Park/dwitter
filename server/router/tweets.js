@@ -1,4 +1,4 @@
-import express, { application } from 'express';
+import express from 'express';
 
 const router = express.Router();
 
@@ -23,7 +23,6 @@ let tweets = [
 // GET /tweets
 // GET /tweets?userId=userId
 router.get('/', (req, res, next) => {
-  console.log(req.query.userId);
   const userId = req.query.userId;
   const tweetDatas = userId
     ? tweets.filter((tweet) => {
@@ -91,6 +90,14 @@ router.put('/:id', (req, res, next) => {
 });
 
 // DELETE /tweets/:id
+router.delete('/:id', (req, res, next) => {
+  const tweetId = req.params.id;
+  const findTweet = tweets.filter((tweet) => {
+    return tweetId !== tweet.id;
+  });
+  console.log(findTweet);
+  res.sendStatus(204); // 삭제는 데이터를 삭제하는 것이기 때문에 삭제가 성공 했는 지 알맞은 상태 코드만 보낸다.
+});
 
 export default router;
 // 등록한 식별자로 시작하는 것을 노출시킨다.
