@@ -1,103 +1,46 @@
 import express from 'express';
+import { body } from 'express-validator';
+import * as tweetRepository from '../controller/tweet.js';
+// 데이터를 사용하기 위해 모듈에서 export한 모든 메서드를 tweetRepository라는 이름으로 가져온다.
+import { validate } from '../middleware/validator.js';
+// 에러를 처리하는 로직을
 
 const router = express.Router();
 
-let tweets = [
-  // POST에서 수정해야 하므로 let을 사용해야 한다.
-  {
-    id: '1',
-    text: 'Fire flower coding!!',
-    createdAt: Date.now().toString(),
-    name: 'Bob',
-    userId: 'bob'
-  },
-  {
-    id: '2',
-    text: 'nono bob!',
-    createdAt: Date.now().toString(),
-    name: 'kevin',
-    userId: 'bob'
-  }
+const validateTweet = [
+  // POST와 PUT에 공통적으로 사용되고 또 재사용의 여지가 있기 때문에 재사용할 수 있도록 변수로 선언해 놓았다.
+  // 이 것도 각 메서드 마다 다른 API를 사용해야 하는 경우가 많기 때문에 valdate 함수 처럼 모듈화 해서 사용하면 좋을 것 같다.
+  body('text')
+    .trim()
+    .isLength({ min: 3 })
+    .withMessage('text should be at least 3 characters'),
+  validate
 ];
 
 // GET /tweets
 // GET /tweets?userId=userId
-router.get('/', (req, res, next) => {
-  const userId = req.query.userId;
-  const tweetDatas = userId
-    ? tweets.filter((tweet) => {
-        return tweet.userId === userId;
-      })
-    : tweets;
-  // req.query.userId가 존재하면 filter 한 데이터 배열 tweetDatas에 할당
-  // userId가 없으면 트윗 전체 목록 tweets 할당
-  res.json(tweetDatas);
-});
+router.get('/', tweetRepository.getAll);
+// 여기에서 메서드에 연결만 하는 것이고 호출하면 안된다.
+// getTweet()이렇게 하면 호출하는 것이다.
+// 호출하게 되면 그 메서드에 연결되는 것이 아니라 그 메서드의 결과 값에 연결되는 것이다.
+// 결과 값이 아니라 메서드에 연결해야하기 때문에 호출하지 않고 메서드에 연결만 한 것이다.
+// 아래도 모두 마찬가지 이다.
 
 // GET /tweets/:id
-router.get('/:id', (req, res, next) => {
-  console.log(req.params.id);
-  const tweetId = req.params.id;
-  const findTweet = tweets.find((tweet) => {
-    // filter를 사용하면 배열이기 때문에 아래에서 데이터 처리할 때 불편하다.
-    // find로 찾으면 배열이 아니라 해당 요소를 반환하기 때문에 해당 요소의 데이터를 바로 처리할 때 더 편리하다.
-
-    return tweet.id === tweetId;
-  });
-
-  if (findTweet) {
-    res.json(findTweet);
-  } else {
-    res.status(404).json({ message: `Tweet id(${tweetId}) not found` });
-  }
-});
+router.get('/:id', tweetRepository.getId);
 
 // POST /tweets
-router.post('/', (req, res, next) => {
-  console.log(req.body);
-  const { text, userName, userId } = req.body;
-  const tweet = {
-    id: Date.now().toString(), // DB 연동 전 임시
-    text,
-    createdAt: Date.now().toString(),
-    name: userName,
-    userId
-  };
-  tweets = [tweet, ...tweets];
-  res.status(201).json(tweet);
-});
+router.post('/', validateTweet, tweetRepository.create);
 
 // PUT /tweets/:id
-router.put('/:id', (req, res, next) => {
-  console.log(req.params.id);
-  const tweetId = req.params.id;
-  const textData = req.body.text;
-
-  const findTweet = tweets.find((tweet) => {
-    // filter를 사용하면 배열이기 때문에 아래에서 데이터 처리할 때 불편하다.
-    // find로 찾으면 배열이 아니라 해당 요소를 반환하기 때문에 해당 요소의 데이터를 바로 처리할 때 더 편리하다.
-    return tweet.id === tweetId;
-  });
-
-  if (findTweet) {
-    findTweet.text = textData;
-    console.log(findTweet.text);
-
-    res.json(findTweet);
-  } else {
-    res.status(404).json({ message: `Tweet id(${tweetId}) not found` });
-  }
-});
+router.put('/:id', validateTweet, tweetRepository.update);
 
 // DELETE /tweets/:id
-router.delete('/:id', (req, res, next) => {
-  const tweetId = req.params.id;
-  const findTweet = tweets.filter((tweet) => {
-    return tweetId !== tweet.id;
-  });
-  console.log(findTweet);
-  res.sendStatus(204); // 삭제는 데이터를 삭제하는 것이기 때문에 삭제가 성공 했는 지 알맞은 상태 코드만 보낸다.
-});
+router.delete('/:id', tweetRepository.remove);
+
+// MVC 패턴으로 리팩토링을 통해 데이터를 model로 이동시키고 처리 로직을 controller로 이동시켜
+// 여기에서는 router의 본래의 역할인 라우팅만 담당하면 되기 때문에 코드가 간결해지고 유지보수성이 좋아졌다.
+// 이런식으로 각각 기능을 모듈화하여 각 모듈에서는 각자의 기능만 하도록 하는 것이 좋다.
 
 export default router;
 // 등록한 식별자로 시작하는 것을 노출시킨다.
