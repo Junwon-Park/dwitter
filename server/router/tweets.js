@@ -4,6 +4,7 @@ import * as tweetRepository from '../controller/tweet.js';
 // 데이터를 사용하기 위해 모듈에서 export한 모든 메서드를 tweetRepository라는 이름으로 가져온다.
 import { validate } from '../middleware/validator.js';
 // 에러를 처리하는 로직의 재사용성을 위해 모듈화 했다.
+import { checkToken } from '../middleware/auth.js';
 
 const router = express.Router();
 

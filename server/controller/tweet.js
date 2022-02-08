@@ -26,17 +26,18 @@ export async function getId(req, res) {
 }
 
 export async function create(req, res) {
-  console.log(req.body);
   const { text, userName, userId } = req.body;
   const tweet = await tweetRepository.create(text, userName, userId);
+  console.log('newTweet!!!', tweet);
   res.status(201).json(tweet);
 }
 
 export async function update(req, res) {
   const tweetId = req.params.id;
   const textData = req.body.text;
-
+  console.log('text', textData); // 잘 나옴
   const findTweet = await tweetRepository.update(tweetId, textData);
+  console.log('findTweet', findTweet); // 출력 안됨, update에서 안옴
 
   if (findTweet) {
     res.json(findTweet);
