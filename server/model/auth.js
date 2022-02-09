@@ -2,6 +2,7 @@ let userData = [
   {
     id: 1,
     userId: 'ab2311',
+    password: '1234',
     userName: 'lottelia',
     email: 'aekdf12334@gmail.com',
     picture: ''
@@ -9,6 +10,7 @@ let userData = [
   {
     id: 2,
     userId: 'abcde11',
+    password: '1234',
     userName: 'mcdonald',
     email: 'aedt134@naver.com',
     picture: ''
@@ -23,9 +25,8 @@ let userData = [
   }
 ];
 
-export const findById = async (id) => {
-  console.log(id);
-  const user = await userData.find((data) => {
+export const findById = (id) => {
+  const user = userData.find((data) => {
     return id === data.id;
   });
   if (user) return user;

@@ -34,6 +34,11 @@ export const create = async (req, res) => {
 export const update = async (req, res) => {
   const tweetId = req.params.id;
   const textData = req.body.text;
+
+  const getTweet = await tweetRepository.getId(tweetId);
+  if (!getTweet) return res.sendStatus(404);
+  if (getTweet.userId !== req.body.userId) return res.sendStatus(403);
+
   const findTweet = await tweetRepository.update(tweetId, textData);
 
   if (findTweet) {
@@ -45,6 +50,11 @@ export const update = async (req, res) => {
 
 export const remove = async (req, res) => {
   const tweetId = req.params.id;
+
+  const getTweet = await tweetRepository.getId(tweetId);
+  if (!getTweet) return res.sendStatus(404);
+  if (getTweet.userId !== req.body.userId) return res.sendStatus(403);
+
   await tweetRepository.remove(tweetId);
   res.sendStatus(204); // 삭제는 데이터를 삭제하는 것이기 때문에 삭제가 성공 했는 지 알맞은 상태 코드만 보낸다.
 };

@@ -32,7 +32,7 @@ export const getAll = () => {
           tweet.userId
         );
 
-        return { ...tweet, userId, userName, picture };
+        return { ...tweet, ID: userId, userName, picture };
       } catch (err) {
         console.error('Error!!!', err);
       }
