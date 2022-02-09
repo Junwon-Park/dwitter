@@ -21,7 +21,7 @@ let tweets = [
 
 //! async가 붙은 함수는 리턴하는 모든 것이 Promise이다.
 //! 그렇기 때문에 이 함수들을 사용하는 controller에서는 해당 함수를 then 체이닝 또는 async/await으로 처리해야 한다.
-export const getAll = async () => {
+export const getAll = () => {
   return Promise.all(
     // findUser로 데이터를 가져오기 위해 map API에 async/await을 사용해야 한다.
     // async 함수에서 리턴하는 값은 Promise이기 때문에 이 map의 배열은 Promise 배열이다.
@@ -31,6 +31,7 @@ export const getAll = async () => {
         const { userId, userName, picture } = await authRepository.findById(
           tweet.userId
         );
+        console.log('getall', userId);
 
         return { ...tweet, userId, userName, picture };
       } catch (err) {
@@ -40,7 +41,7 @@ export const getAll = async () => {
   );
 };
 
-export const getByUserId = async (userId) => {
+export const getByUserId = (userId) => {
   return getAll().then((usersTweets) => {
     usersTweets.filter((tweet) => {
       return tweet.userId === userId;
@@ -48,7 +49,7 @@ export const getByUserId = async (userId) => {
   });
 };
 
-export const getId = async (tweetId) => {
+export const getId = (tweetId) => {
   return getAll().then((usersTweets) => {
     console.log('userTweets!!', usersTweets);
     const findTweets = usersTweets.find((tweet) => {
@@ -62,7 +63,7 @@ export const getId = async (tweetId) => {
   });
 };
 
-export const create = async (text, userName, userId) => {
+export const create = (text, userName, userId) => {
   const tweet = {
     id: Date.now().toString(), // DB 연동 전 임시
     text,
@@ -70,8 +71,8 @@ export const create = async (text, userName, userId) => {
     name: userName,
     userId
   };
-
   tweets = [tweet, ...tweets];
+  // console.log(tweets); // 정상적으로 추가 됐음
   return tweet;
 };
 
@@ -83,7 +84,7 @@ export const update = async (tweetId, textData) => {
   return tweet;
 };
 
-export const remove = async (tweetId) => {
+export const remove = (tweetId) => {
   tweets = tweets.filter((tweet) => {
     return tweetId !== tweet.id;
   });

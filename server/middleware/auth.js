@@ -17,7 +17,7 @@ const encodeToken = async (token, secret) => {
 // check token
 // 토큰의 유효성을 확인해서 로그인된 유저인 지 확인하는 함수를 미들웨어 파트로 분리했다.
 // 컨트롤러에 있어도 문제 없지만 앱이 실행될 때마다 실행되는 부분이기 때문에 미들웨어로 빼는 것이 맞는 것 같다.
-export const checkToken = async (req, res) => {
+export const checkToken = async (req, res, next) => {
   const authorization = req.get('Authorization');
   // get 메소드를 사용하면 요청 메세지의 해당 필드의 값을 가져온다.
   if (!(authorization && authorization.startsWith('Bearer ')))
@@ -32,10 +32,10 @@ export const checkToken = async (req, res) => {
   const encoded = await encodeToken(token, secret);
   console.log(encoded);
   const user = await authRepository.findUser(encoded.data);
-  console.log(user);
+  console.log('User!!!!', user);
 
   if (!user) res.status(401).json({ meassage: 'Authentication error' });
-  else res.json({ token, userName: user.userName });
+  else next();
 };
 // 토큰을 verify 메서드로 복호화 해서 DB에 일치하는 userId가 있는 지 확인한 뒤,
 // 있다면 API에 맞게 응답을 보내고 없다면 에러 메세지를 보낸다.

@@ -20,7 +20,7 @@ const validateTweet = [
 
 // GET /tweets
 // GET /tweets?userId=userId
-router.get('/', tweetRepository.getAll);
+router.get('/', checkToken, tweetRepository.getAll);
 // 여기에서 메서드에 연결만 하는 것이고 호출하면 안된다.
 // getTweet()이렇게 하면 호출하는 것이다.
 // 호출하게 되면 그 메서드에 연결되는 것이 아니라 그 메서드의 결과 값에 연결되는 것이다.
@@ -28,16 +28,16 @@ router.get('/', tweetRepository.getAll);
 // 아래도 모두 마찬가지 이다.
 
 // GET /tweets/:id
-router.get('/:id', tweetRepository.getId);
+router.get('/:id', checkToken, tweetRepository.getId);
 
 // POST /tweets
-router.post('/', validateTweet, tweetRepository.create);
+router.post('/', checkToken, validateTweet, tweetRepository.create);
 
 // PUT /tweets/:id
-router.put('/:id', validateTweet, tweetRepository.update);
+router.put('/:id', checkToken, validateTweet, tweetRepository.update);
 
 // DELETE /tweets/:id
-router.delete('/:id', tweetRepository.remove);
+router.delete('/:id', checkToken, tweetRepository.remove);
 
 // MVC 패턴으로 리팩토링을 통해 데이터를 model로 이동시키고 처리 로직을 controller로 이동시켜
 // 여기에서는 router의 본래의 역할인 라우팅만 담당하면 되기 때문에 코드가 간결해지고 유지보수성이 좋아졌다.

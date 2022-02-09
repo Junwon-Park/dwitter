@@ -23,11 +23,15 @@ let userData = [
   }
 ];
 
-export const findById = (id) => {
-  const user = userData.find((data) => {
+export const findById = async (id) => {
+  console.log(id);
+  const user = await userData.find((data) => {
+    console.log(id === data.id);
+    // console.log(data.id);
     return id === data.id;
   });
-  if (user) return user;
+  console.log('User!', user);
+  if (user !== null) return user;
 };
 
 export const findUser = (userId) => {
