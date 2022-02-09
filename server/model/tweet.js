@@ -31,7 +31,6 @@ export const getAll = () => {
         const { userId, userName, picture } = await authRepository.findById(
           tweet.userId
         );
-        console.log('getall', userId);
 
         return { ...tweet, userId, userName, picture };
       } catch (err) {
@@ -51,14 +50,11 @@ export const getByUserId = (userId) => {
 
 export const getId = (tweetId) => {
   return getAll().then((usersTweets) => {
-    console.log('userTweets!!', usersTweets);
     const findTweets = usersTweets.find((tweet) => {
-      console.log('findfind', tweet); // 잘 나옴
       // filter를 사용하면 배열이기 때문에 아래에서 데이터 처리할 때 불편하다.
       // find로 찾으면 배열이 아니라 해당 요소를 반환하기 때문에 해당 요소의 데이터를 바로 처리할 때 더 편리하다.
       return tweet.id === tweetId;
     });
-    console.log('findfind2', findTweets); // 잘 나옴
     return findTweets;
   });
 };
@@ -72,13 +68,11 @@ export const create = (text, userName, userId) => {
     userId
   };
   tweets = [tweet, ...tweets];
-  // console.log(tweets); // 정상적으로 추가 됐음
   return tweet;
 };
 
 export const update = async (tweetId, textData) => {
   const tweet = await getId(tweetId);
-  console.log('update!!', tweet); // 안옴, getId에서 안옴
   if (tweet) tweet.text = textData;
   // 어떤 작업 후에 결과를 변수에 담아서 처리하는 경우 해당 변수에 데이터가 들어 왔는 지 조건문으로 확인하는 것이 좋다.
   return tweet;

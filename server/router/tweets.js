@@ -5,6 +5,7 @@ import * as tweetRepository from '../controller/tweet.js';
 import { validate } from '../middleware/validator.js';
 // 에러를 처리하는 로직의 재사용성을 위해 모듈화 했다.
 import { checkToken } from '../middleware/auth.js';
+// Tweet 관련 요청의 토큰을 검사하기 위해 만든 미들웨어
 
 const router = express.Router();
 
@@ -18,6 +19,8 @@ const validateTweet = [
   validate
 ];
 
+// /tweets로 들어오는 Tweet 관련 요청은 로그인을 해야만 권한이 주어지므로 토큰 인증이 되어야 원하는 응답을 받을 수 있도록 한다.
+// 토큰을 인증하기 위해 생성한 미들웨어를 라우터의 두 번째 인자(Mount Path 다음)로 넣어서 가장 먼저 실행되도록 한다.
 // GET /tweets
 // GET /tweets?userId=userId
 router.get('/', checkToken, tweetRepository.getAll);

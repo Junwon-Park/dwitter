@@ -9,7 +9,6 @@ export const getAll = async (req, res) => {
   const tweetDatas = await (userId
     ? tweetRepository.getByUserId(userId)
     : tweetRepository.getAll());
-  console.log(tweetDatas);
   // req.query.userId가 존재하면 filter 한 데이터 배열 tweetDatas에 할당
   // userId가 없으면 트윗 전체 목록 tweets 할당
   res.json(tweetDatas);
@@ -29,16 +28,13 @@ export const getId = async (req, res) => {
 export const create = async (req, res) => {
   const { text, userName, userId } = req.body;
   const tweet = await tweetRepository.create(text, userName, userId);
-  console.log('newTweet!!!', tweet);
   res.status(201).json(tweet);
 };
 
 export const update = async (req, res) => {
   const tweetId = req.params.id;
   const textData = req.body.text;
-  console.log('text', textData); // 잘 나옴
   const findTweet = await tweetRepository.update(tweetId, textData);
-  console.log('findTweet', findTweet); // 출력 안됨, update에서 안옴
 
   if (findTweet) {
     res.json(findTweet);

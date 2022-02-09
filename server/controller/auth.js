@@ -34,7 +34,6 @@ export const checkUserInfo = async (req, res) => {
           // await은 비동기로 동작하기 때문에 try/catch로 에러 핸들링
           // 토큰 생성 및 응답
           const token = await createToken(userId, secret, expiresInDays);
-          console.log(token);
           res.status(201).json({ token, userName, picture });
         } catch (err) {
           console.error(err);

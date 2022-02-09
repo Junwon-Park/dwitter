@@ -30,12 +30,13 @@ export const checkToken = async (req, res, next) => {
 
   const token = authorization.split(' ')[1];
   const encoded = await encodeToken(token, secret);
-  console.log(encoded);
   const user = await authRepository.findUser(encoded.data);
-  console.log('User!!!!', user);
 
-  if (!user) res.status(401).json({ meassage: 'Authentication error' });
-  else next();
+  if (!user) return res.status(401).json({ meassage: 'Authentication error' });
+  // if 문이 실행되면 아래 로직은 실행되면 안되므로 내부에서 응답은 return해주고 또는
+  // 아래 로직을 else로 분기한다.
+  next();
+  // user가 존재한다면 다음 미들웨어를 실행해야 하므로 next()를 호출한다.
 };
 // 토큰을 verify 메서드로 복호화 해서 DB에 일치하는 userId가 있는 지 확인한 뒤,
 // 있다면 API에 맞게 응답을 보내고 없다면 에러 메세지를 보낸다.
