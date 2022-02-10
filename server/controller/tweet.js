@@ -35,6 +35,7 @@ export const update = async (req, res) => {
   const tweetId = req.params.id;
   const textData = req.body.text;
 
+  // 업데이트하려는 트윗이 요청한 유저가 작성한 트윗인지 확인하고 맞다면 업데이트하고 그렇지 않다면 403 응답
   const getTweet = await tweetRepository.getId(tweetId);
   if (!getTweet) return res.sendStatus(404);
   if (getTweet.userId !== req.body.userId) return res.sendStatus(403);
@@ -50,7 +51,7 @@ export const update = async (req, res) => {
 
 export const remove = async (req, res) => {
   const tweetId = req.params.id;
-
+  // 삭제하려는 트윗이 요청한 유저가 작성한 트윗인지 확인하고 맞다면 삭제하고 그렇지 않다면 403 응답
   const getTweet = await tweetRepository.getId(tweetId);
   if (!getTweet) return res.sendStatus(404);
   if (getTweet.userId !== req.body.userId) return res.sendStatus(403);

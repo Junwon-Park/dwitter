@@ -1,9 +1,6 @@
 import jwt from 'jsonwebtoken';
+import { config } from '../config.js';
 import * as authRepository from '../model/auth.js';
-
-const secret =
-  '54FA0AC6FB7BA4B0EC2DC9FC8F7D5C553C5C3BE6F964E3F6DD49795ADDA51010';
-// mcdonald를 SHA-256으로 해싱한 값이다.
 
 const encodeToken = async (token, secret) => {
   try {
@@ -29,7 +26,7 @@ export const checkToken = async (req, res, next) => {
     return res.status(401).json({ meassage: 'Authentication error' });
 
   const token = authorization.split(' ')[1];
-  const encoded = await encodeToken(token, secret);
+  const encoded = await encodeToken(token, config.jwt.secretKey);
   const user = await authRepository.findUser(encoded.data);
 
   if (!user) return res.status(401).json({ meassage: 'Authentication error' });

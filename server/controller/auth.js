@@ -1,12 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { config } from '../config.js';
 import * as authRepository from '../model/auth.js';
-
-const secret =
-  '54FA0AC6FB7BA4B0EC2DC9FC8F7D5C553C5C3BE6F964E3F6DD49795ADDA51010';
-// mcdonald를 SHA-256으로 해싱한 값이다.
-const bcryptRound = 10;
-const expiresInDays = '7d';
 
 const createToken = (data, secret, options) => {
   // 토큰 생성은 여러 메서드에서 동일하게 작성해야 하기 때문에 재사용성이 좋게 함수로 정의한다.
@@ -25,21 +20,29 @@ export const checkUserInfo = async (req, res) => {
   if (user) res.status(409).json({ message: `${userId} is already exist` });
   else {
     // 사용자 비밀번호 hashing
-    bcrypt.hash(password, bcryptRound, async function (err, hash) {
-      if (err) console.error('Bcrypt hash error!', err);
-      else {
-        await authRepository.saveUser(userId, hash, userName, email, picture);
-        // 유저 정보 저장
-        try {
-          // await은 비동기로 동작하기 때문에 try/catch로 에러 핸들링
-          // 토큰 생성 및 응답
-          const token = await createToken(userId, secret, expiresInDays);
-          res.status(201).json({ token, userName, picture });
-        } catch (err) {
-          console.error(err);
+    bcrypt.hash(
+      password,
+      config.bcrypt.bcryptRound,
+      async function (err, hash) {
+        if (err) console.error('Bcrypt hash error!', err);
+        else {
+          await authRepository.saveUser(userId, hash, userName, email, picture);
+          // 유저 정보 저장
+          try {
+            // await은 비동기로 동작하기 때문에 try/catch로 에러 핸들링
+            // 토큰 생성 및 응답
+            const token = await createToken(
+              userId,
+              config.jwt.secretKey,
+              config.jwt.expiresInDays
+            );
+            res.status(201).json({ token, userName, picture });
+          } catch (err) {
+            console.error(err);
+          }
         }
       }
-    });
+    );
   }
 };
 // 회원가입 요청이 들어오면 컨트롤러에서 DB에 해당 유저가 존재하는 지 확인한다.
@@ -61,7 +64,11 @@ export const checkLogin = (req, res) => {
         if (!result)
           res.status(401).json({ message: 'userId or Password is not found' });
         else {
-          const token = await createToken(userId, secret, expiresInDays);
+          const token = await createToken(
+            userId,
+            config.jwt.secretKey,
+            config.jwt.expiresInDays
+          );
           const { userName, picture } = user;
           res.json({ token, userName, picture });
         }
