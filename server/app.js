@@ -1,30 +1,31 @@
 import express from 'express';
+import 'express-async-errors';
 import cors from 'cors';
 import morgan from 'morgan';
 import helmet from 'helmet';
-import tweetsRouter from './router/tweets.js'; // .js 확장자 까지 정확히 적어야 한다.
+import tweetsRouter from './router/tweets.js';
 import authRouter from './router/auth.js';
 import { config } from './config.js';
+import { initSocket } from './connection/socket.js';
 
 const app = express();
 
+app.use(express.json());
+app.use(helmet());
 app.use(cors());
 app.use(morgan('tiny'));
-app.use(helmet());
-app.use(express.json()); // 이 앱에서 req의 body를 보려면 express.json을 미들웨어에 등록해야 한다.
 
-app.use('/tweets', tweetsRouter); // tweet관련 라우팅 처리를 하는 라우터 미들웨어(모듈) 실행
-app.use('/auth', authRouter); // auth관련 라우팅 처리를 하는 라우터 미들웨어(모듈) 실행
+app.use('/tweets', tweetsRouter);
+app.use('/auth', authRouter);
 
 app.use((req, res, next) => {
-  // 요청이 위 미들웨어에서 처리된 것 없이 여기까지 왔다면 잘못된 URL로 요청한 것이기 때문에 404를 보낸다.
   res.sendStatus(404);
 });
 
 app.use((error, req, res, next) => {
-  // 미들웨어에서 발생한 에러를 던지면 받아서 처리하는 곳
   console.error(error);
   res.sendStatus(500);
 });
 
-app.listen(config.host.port);
+const server = app.listen(config.host.port);
+initSocket(server);
