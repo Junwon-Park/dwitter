@@ -16,7 +16,7 @@ export async function signup(req, res) {
     password: hashed,
     name,
     email,
-    url,
+    url
   });
   const token = createJwtToken(userId);
   res.status(201).json({ token, username });
@@ -38,7 +38,7 @@ export async function login(req, res) {
 
 function createJwtToken(id) {
   return jwt.sign({ id }, config.jwt.secretKey, {
-    expiresIn: config.jwt.expiresInSec,
+    expiresIn: config.jwt.expiresInSec
   });
 }
 

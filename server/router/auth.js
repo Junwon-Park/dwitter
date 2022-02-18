@@ -16,7 +16,7 @@ const validateCredential = [
     .trim()
     .isLength({ min: 5 })
     .withMessage('password should be at least 5 characters'),
-  validate,
+  validate
 ];
 
 const validateSignup = [
@@ -27,12 +27,13 @@ const validateSignup = [
     .isURL()
     .withMessage('invalid URL')
     .optional({ nullable: true, checkFalsy: true }),
-  validate,
+  validate
 ];
+
 router.post('/signup', validateSignup, authController.signup);
 
 router.post('/login', validateCredential, authController.login);
 
-router.get('/me', isAuth, authController.me);
+router.get('/me', isAuth, authController.me); // isAuth에서 현재 요청에 userId 필드 추가
 
 export default router;
