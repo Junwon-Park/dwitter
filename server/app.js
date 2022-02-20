@@ -7,7 +7,7 @@ import tweetsRouter from './router/tweets.js';
 import authRouter from './router/auth.js';
 import { config } from './config.js';
 import { initSocket } from './connection/socket.js';
-import { db } from './db/database.js';
+import { sequelize } from './db/database.js';
 
 const app = express();
 
@@ -28,8 +28,9 @@ app.use((error, req, res, next) => {
   res.sendStatus(500);
 });
 
-db.getConnection()
-  .then((connection) => console.log('Connected!'))
-  .catch((err) => console.error(err));
-const server = app.listen(config.host.port);
-initSocket(server);
+sequelize.sync().then(() => {
+  // sequelize의 sync() 메서드는 우리가 작성한 Model과 실제 DB의 스키마가 일치하도록(Sync) 해주는 메서드이다.
+  const server = app.listen(config.host.port);
+  initSocket(server);
+});
+// 위 처럼 DB가 연결된 다음 바로 Server와 Socket을 연결하기 위해 then() 안에 Server와 Socket을 실행했다.

@@ -1,4 +1,26 @@
 import { db } from '../db/database.js';
+import SQ from 'sequelize';
+import { sequelize } from '../db/database.js';
+import { User } from './auth.js';
+
+const DataTypes = SQ.DataTypes;
+// SQ(sequelize 라이브러리)의 DataTypes는 Model의 스키마의 각 컬럼의 타입을 정의할 때, 사용하는 객체이다.
+
+const Tweet = sequelize.define('tweet', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true
+  },
+  text: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  }
+});
+Tweet.belongsTo(User);
+// "Tweet Model이 User Model에 속한다.(종속된다.)"라는 의미이다.
+//! 생성된 tweet 테이블에는 관계를 맺은 user 테이블의 이름을 딴 필드인 userId 필드가 생성되고 이 필드는 FK이다.
 
 const USERS_TWEETS_JOIN =
   'SELECT tw.id, tw.text, tw.createdAt, tw.userId, us.username, us.name, us.url FROM tweets as tw JOIN users as us ON tw.userId = us.id';
