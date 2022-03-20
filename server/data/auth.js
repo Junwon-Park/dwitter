@@ -1,5 +1,6 @@
-import SQ from 'sequelize';
+import SQ from 'sequelize'; // Sequelize 라이브러리
 import { sequelize } from '../db/database.js';
+// DB를 다루기 위해 database 모듈에서 생성한 sequelize 객체를 불러온다.
 
 const DataTypes = SQ.DataTypes;
 // SQ(sequelize 라이브러리)의 DataTypes는 Model의 스키마의 각 컬럼의 타입을 정의할 때, 사용하는 객체이다.
@@ -10,12 +11,14 @@ export const User = sequelize.define(
   // 두 번째 인자로 Table의 스키마,
   // 세 번쨰 인자는 Table의 옵션을 정의할 수 있으며, 이 것은 Optional(선택 사항)이다.
   // data/tweet.js에서 Tweet과 관계를 설정하기 위해 불러와야 하므로 export 해줘야 한다.
-  'user',
+  'user', // 생성하는 테이블은 단수로 입력한다.(실제로 생성된 테이블은 복수(users)로 생성된다.)
   {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
-      allowNull: false, // allowNull의 기본 값은 true이다.
+      allowNull: false,
+      // allowNull은 Null을 허락하는 것이고 false라면 Not Null인 것과 같다.
+      // 기본 값은 true이다.
       primaryKey: true
     },
     username: {

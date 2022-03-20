@@ -5,11 +5,11 @@ import SQ from 'sequelize'; // Sequelize 라이브러리를 불러온다.
 const { host, user, database, password } = config.db; // DB의 정보를 더 간편하게 사용하기 위해 구조 분해 할당을 사용한다.
 export const sequelize = new SQ.Sequelize(database, user, password, {
   host,
-  dialect: 'mysql' // Default 값이 mysql이기 때문에 생략 가능하지만 명시적으로 하기 위해 적었다.
+  dialect: 'mysql' // 사용할 DB의 종류를 입력한다. Default 값이 mysql이기 때문에 생략 가능하지만 명시적으로 하기 위해 적었다.
 });
-// 첫 번째 인자로 DB에 접속할 때, 필요한 정보를 받고, 두 번째 인자로 실행할 DB의 옵션을 지정할 수 있다.
+// 첫 번째 인자로 DB 이름(dwitter), 두 번째 인자로 user 정보(root), 세 번째 인자로 비밀번호, 마지막 인자로 접속할 DB의 옵션을 객체의 형태로 지정할 수 있다.
 // 여기에서는 우리가 지정한 host와 사용할 RDBMS로 mysql을 옵션으로 지정했다.
-// 이렇게 생성된 sequelize 객체로 app.js에서 DB를 연동한다.
+// 이렇게 생성된 sequelize 객체로 app.js에서 DB를 연동한다.(그래서 이렇게 생성한 sequelize 객체를 export 한 것이다.)
 
 const pool = mysql.createPool({
   // createPool을 사용해서 Pool을 생성한다.

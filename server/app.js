@@ -5,9 +5,9 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import tweetsRouter from './router/tweets.js';
 import authRouter from './router/auth.js';
-import { config } from './config.js';
-import { initSocket } from './connection/socket.js';
-import { sequelize } from './db/database.js';
+import { config } from './config.js'; // 환경 변수를 사용하기 위해 생성한 모듈
+import { initSocket } from './connection/socket.js'; // socket을 생성하기 위한 모듈
+import { sequelize } from './db/database.js'; // Sequelize를 사용하기 위해서 sequelize 객체를 생성하는 모듈
 
 const app = express();
 
